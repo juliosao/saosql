@@ -1,0 +1,8 @@
+Package: saosql
+Version: VERSION
+Section: base
+Priority: optional
+Architecture: all
+Depends: python-mysqldb
+Maintainer: Julio A. García López <julio.garcia@afronta.com>
+Description: Cliente SQL

@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Name=SAO SQL Client
+Comment=This app launch utilities requested from web apps.
+Exec=/opt/saosql/extras/launcher.sh
+Path=/opt/saosql/
+Icon=/usr/share/icons/gnome/scalable/places/network-workgroup.svg
+Terminal=false
+Type=Application
+Categories=Utility;Devel;Application
