@@ -1,31 +1,33 @@
 #!/usr/bin/python
 
 import sys
-import gtk
 import os
-from gtk import glade
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
 
 class connection:
 	def __init__(self,parent):  
-		self.glade=glade.XML(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../ui/connect.glade'),None,None)
-		self.glade.signal_autoconnect({
-			'on_btnConectar_clicked':self.on_btnConectar_clicked,
-			'on_btnCancelar_clicked':self.on_btnCancelar_clicked,
-			})
+		builder = gtk.Builder()
+		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/connection.glade'))
+		builder.connect_signals(self)
+		self.dialog=builder.get_object('dlgConnection')
+		print self.dialog
+
 		self.parent=parent
-		self.dialog=self.glade.get_widget("frmConect");
-		self.host=None
-		self.port=None
-		self.database=None
-		self.use=None
-		self.password=None
-		self.result=False
+		self.host=builder.get_object
+		self.port=builder.get_object
+		self.database=builder.get_object
+		self.user=builder.get_object
+		self.password=builder.get_object
+		self.result=builder.get_object
           
 	def show(self):	
-		self.dialog.show();
+		self.dialog.show()
 		
 	def hide(self):
-		self.dialog.hide();
+		self.dialog.hide()
+		self.dialog.destroy()
 
 	def on_btnConectar_clicked(self,b):
 		self.host=self.glade.get_widget('txtHost').get_text()
@@ -33,17 +35,19 @@ class connection:
 		self.database=self.glade.get_widget('txtBaseDatos').get_text()
 		self.user=self.glade.get_widget('txtUsuario').get_text()
 		self.password=self.glade.get_widget('txtPass').get_text()
-		self.result=True;
-		self.hide();
+		self.result=True
+		self.hide()
 		print "Iniciando callback..."
 		self.parent.conectar(self.host,self.port,self.database,self.user,self.password);
 		
 	
 	def on_btnCancelar_clicked(self,b):
-		self.result=False;
-		self.hide();
+		self.result=False
+		self.hide()		
 		print "no-conectando..."
 		
 if __name__ == "__main__":
-	p = connection()
+	p = connection(None)
+	p.show()
+
 	gtk.main()

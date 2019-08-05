@@ -11,7 +11,7 @@ Requires: MySQL-python
 BuildArch: noarch
 
 %description
-saosql provides an ease to use graficale enviroment for running querys on mysql servers
+Saosql provides an ease to use graficale enviroment for running querys on mysql servers
 
 %prep
 %setup -q

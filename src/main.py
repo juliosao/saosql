@@ -3,13 +3,12 @@
 
 import sys
 import MySQLdb
-import gtk
 import string
-import gobject
 import os
 
-from gtk import glade
-from gobject import GObject
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
 
 
 import connection
