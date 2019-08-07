@@ -21,7 +21,8 @@ class about:
 		self.dialog=builder.get_object('dlgAbout')
 		          
 	def show(self):	
-		self.dialog.show()
+		self.dialog.run()
+		self.dialog.destroy()
 		
 	def hide(self):
 		self.dialog.hide()

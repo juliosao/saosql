@@ -19,36 +19,26 @@ class pyGtkSql:
 	
 	def __init__(self):  
 		pyGtkSql.contador+=1
-		self.glade=glade.XML(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../ui/pygtksql.glade'),None,None)
-		self.glade.signal_autoconnect({
-			'on_btnConectar_clicked':self.on_btnConectar_clicked,
-			'on_btnDesconectar_clicked':self.on_btnDesconectar_clicked,
-			'on_btnEjecutar_clicked':self.on_btnEjecutar_clicked,
-			'on_Principal_destroy':self.salir,
-			'on_salir1_activate':self.salir,
-			'on_copiar1_activate':self.copiar,
-			'on_cortar1_activate':self.cortar,
-			'on_pegar1_activate':self.pegar,
-			'on_nuevo1_activate':self.nuevo,
-			'on_cmbTabla_changed':self.datosTabla,
-			'on_acerca_de1_activate':self.mostrarAcerca,
-			'on_guardar_como1_activate':self.guardar_como,
-			'on_guardar1_activate':self.guardar,
-			'on_abrir1_activate':self.abrir
-			})   
+		builder = gtk.Builder()
+		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/main.glade'))
+		builder.connect_signals(self)  
 		
-		self.ventana=self.glade.get_widget('Principal')
-		self.clipboard = gtk.Clipboard(selection="CLIPBOARD")
-		self.txtSQL = self.glade.get_widget("txtSQL")
-		self.treResultado=self.glade.get_widget("treResultado")
-		self.txtLog=self.glade.get_widget("txtLogs")
-		self.tabPaginas=self.glade.get_widget("tabPaginas")
-		self.cmbTabla=self.glade.get_widget("cmbTabla")
-		self.treTabla=self.glade.get_widget("treTabla")
+		self.window=builder.get_object('main')
+		#self.clipboard = gtk.Clipboard(selection="CLIPBOARD")
+		self.txtSQL = builder.get_object("txtSQL")
+		self.treResultado=builder.get_object("treResultado")
+		self.txtLog=builder.get_object("txtLogs")
+		self.tabPaginas=builder.get_object("tabPaginas")
+		self.cmbTabla=builder.get_object("cmbTabla")
+		self.treTabla=builder.get_object("treTabla")
 		self.connection=None
 		self.db=None
 		self.filename=None
+
+	def show(self):
+		self.window.show()
 	
+	"""
 	def msgbox(self,titulo,texto,accept=True,cancel=False):
 		dialog = gtk.MessageDialog(	None, gtk.DIALOG_MODAL)
 		dialog.set_title(titulo)
@@ -360,7 +350,9 @@ class pyGtkSql:
 				self.log("Error al guardar:" +str(e))		
 		else:
 			self.guardar_como(sender)
+	"""
 		
 if __name__ == "__main__":
 	p = pyGtkSql()
+	p.show()
 	gtk.main()
