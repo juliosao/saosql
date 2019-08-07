@@ -3,6 +3,7 @@
 import sys
 import os
 import gi
+import MySQLdb
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 
@@ -12,42 +13,50 @@ class connection:
 		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/connection.glade'))
 		builder.connect_signals(self)
 		self.dialog=builder.get_object('dlgConnection')
-		print self.dialog
-
 		self.parent=parent
-		self.host=builder.get_object
-		self.port=builder.get_object
-		self.database=builder.get_object
-		self.user=builder.get_object
-		self.password=builder.get_object
-		self.result=builder.get_object
+		self.host=builder.get_object('txtHost')
+		self.port=builder.get_object('txtPort')
+		self.database=builder.get_object('txtDatabase')
+		self.user=builder.get_object('txtUser')
+		self.password=builder.get_object('txtPassword')
+		self.lblStatus=builder.get_object('lblStatus')
+		self.result=None
           
 	def show(self):	
-		self.dialog.show()
-		
-	def hide(self):
-		self.dialog.hide()
+		self.dialog.run()
 		self.dialog.destroy()
-
+		return self.result
+		
 	def on_btnConectar_clicked(self,b):
-		self.host=self.glade.get_widget('txtHost').get_text()
-		self.port=self.glade.get_widget('txtPuerto').get_text()
-		self.database=self.glade.get_widget('txtBaseDatos').get_text()
-		self.user=self.glade.get_widget('txtUsuario').get_text()
-		self.password=self.glade.get_widget('txtPass').get_text()
-		self.result=True
-		self.hide()
-		print "Iniciando callback..."
-		self.parent.conectar(self.host,self.port,self.database,self.user,self.password);
+		try:
+			host=self.host.get_text()
+			port=self.port.get_text()
+			database=self.database.get_text()
+			user=self.user.get_text()
+			password=self.password.get_text()
+
+			self.lblStatus.show()
+			self.result = MySQLdb.connect(host=host,user=user,passwd=password,db=database,port=int(port))		
+			if self.result == None:
+				dlg = gtk.MessageDialog(self.dialog, 0, gtk.MessageType.ERROR, gtk.ButtonsType.OK, "Cannot connect to %s:%s@%s"(user,database,host))
+				dlg.set_title("Error")
+				dlg.run()
+				dlg.destroy()
+			self.dialog.hide()
+		except Exception as ex:
+			dlg = gtk.MessageDialog(self.dialog, 0, gtk.MessageType.ERROR, gtk.ButtonsType.OK, str(ex))
+			dlg.set_title("Error")
+			dlg.run()
+			dlg.destroy()
+			self.lblStatus.hide()
 		
 	
 	def on_btnCancelar_clicked(self,b):
 		self.result=False
-		self.hide()		
-		print "no-conectando..."
+		self.dialog.hide()		
+		
 		
 if __name__ == "__main__":
 	p = connection(None)
-	p.show()
-
-	gtk.main()
+	r = p.show()
+	sys.exit(0 if r != False else 1)
