@@ -6,8 +6,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 
-class about:
-	def __init__(self):  
+class About:
+	def __init__(self,parent=None):  
 		"""
 		self.glade=glade.XML(os.path.join(os.path.dirname(os.path.abspath(__file__)),'../ui/about.glade'),None,None)
 		self.glade.signal_autoconnect({
@@ -19,6 +19,8 @@ class about:
 		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/about.glade'))
 		builder.connect_signals(self)
 		self.dialog=builder.get_object('dlgAbout')
+		if parent != None:
+			self.dialog.set_transient_for(parent)
 		          
 	def show(self):	
 		self.dialog.run()

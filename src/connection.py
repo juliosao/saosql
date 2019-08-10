@@ -7,13 +7,14 @@ import MySQLdb
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 
-class connection:
-	def __init__(self,parent):  
+class Connection:
+	def __init__(self,parent=None):  
 		builder = gtk.Builder()
 		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/connection.glade'))
 		builder.connect_signals(self)
-		self.dialog=builder.get_object('dlgConnection')
-		self.parent=parent
+		
+
+		self.dialog=builder.get_object('dlgConnection')			
 		self.host=builder.get_object('txtHost')
 		self.port=builder.get_object('txtPort')
 		self.database=builder.get_object('txtDatabase')
@@ -38,7 +39,7 @@ class connection:
 			self.lblStatus.show()
 			self.result = MySQLdb.connect(host=host,user=user,passwd=password,db=database,port=int(port))		
 			if self.result == None:
-				dlg = gtk.MessageDialog(self.dialog, 0, gtk.MessageType.ERROR, gtk.ButtonsType.OK, "Cannot connect to %s:%s@%s"(user,database,host))
+				dlg = gtk.MessageDialog(self.dialog, 0, gtk.MessageType.ERROR, gtk.ButtonsType.OK, "Cannot connect to %s:%s@%s" % (user,database,host))
 				dlg.set_title("Error")
 				dlg.run()
 				dlg.destroy()
@@ -52,11 +53,11 @@ class connection:
 		
 	
 	def on_btnCancelar_clicked(self,b):
-		self.result=False
+		self.result=None
 		self.dialog.hide()		
 		
 		
 if __name__ == "__main__":
-	p = connection(None)
+	p = Connection(None)
 	r = p.show()
-	sys.exit(0 if r != False else 1)
+	sys.exit(0 if r != None else 1)

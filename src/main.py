@@ -15,14 +15,20 @@ import connection
 import about
 
 class pyGtkSql:
-	contador=0
+	count=0
 	
-	def __init__(self):  
-		pyGtkSql.contador+=1
+	def __init__(self,database=None): 
 		builder = gtk.Builder()
 		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/main.glade'))
-		builder.connect_signals(self)  
+		builder.connect_signals(self)  		
 		
+		if database == None:
+			c = connection.Connection(None)
+			self.db = c.show()
+		else:
+			self.db=database
+
+
 		self.window=builder.get_object('main')
 		#self.clipboard = gtk.Clipboard(selection="CLIPBOARD")
 		self.txtSQL = builder.get_object("txtSQL")
@@ -31,13 +37,24 @@ class pyGtkSql:
 		self.tabPaginas=builder.get_object("tabPaginas")
 		self.cmbTabla=builder.get_object("cmbTabla")
 		self.treTabla=builder.get_object("treTabla")
-		self.connection=None
-		self.db=None
+		self.connection=None		
 		self.filename=None
+		pyGtkSql.count+=1
+		
 
 	def show(self):
-		self.window.show()
+		self.window.set_default_size(800, 600)
+		self.window.show()		
 	
+	def close(self,sender):					
+		self.window.destroy()
+		pyGtkSql.count-=1
+		if pyGtkSql.count==0:
+			gtk.main_quit()
+	
+	def showAbout(self,sender):
+		a=about.About(self)
+		a.show()
 	"""
 	def msgbox(self,titulo,texto,accept=True,cancel=False):
 		dialog = gtk.MessageDialog(	None, gtk.DIALOG_MODAL)

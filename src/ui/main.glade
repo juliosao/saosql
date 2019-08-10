@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="main">
     <property name="can_focus">False</property>
+    <signal name="destroy" handler="close" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -156,6 +157,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="showAbout" swapped="no"/>
                       </object>
                     </child>
                   </object>
