@@ -66,24 +66,27 @@ class pyGtkSql:
 	def loadDBStructure(self):
 		if self.db:
 			try:			
+				self.store = gtk.TreeStore(str,str,str,str,str,str)
 				cursor=self.db.cursor(MySQLdb.cursors.Cursor)
 				cursor.execute("SHOW TABLES")
-				resultado=cursor.fetchall()
+				rows=cursor.fetchall()
+				cursor.close()
 
-				if type(resultado) is tuple:		
-					self.store = gtk.TreeStore(str,str,str,str,str,str)
-
-					self.log("Obtenida informacion de estructura de la base de datos")
+				if type(rows) is tuple:
 							
-					for fila in resultado:
-						self.log(fila[0])
-						tabla = self.store.append(None,[fila[0],"","","","",""])
+					for row in rows:
+						self.log(row[0])
+						tabla = self.store.append(None,[row[0],"","","","",""])
 
 						cursor2=self.db.cursor(MySQLdb.cursors.Cursor)
-						cursor2.execute("SHOW FIELDS FROM %s" % fila[0])
-						for columna in cursor2.fetchall():
-							print columna
-							self.store.append(tabla,[columna[0],columna[1],columna[2],columna[3],columna[4],columna[5]])
+						cursor2.execute("SHOW FIELDS FROM %s" % row[0])
+						columns = cursor2.fetchall()
+						cursor2.close()
+
+						for column in columns:
+							print column
+							self.store.append(tabla,[column[0],column[1],column[2],column[3],column[4],column[5]])
+							
 									
 					self.treStructure.set_model(self.store)
 										
@@ -173,26 +176,26 @@ class pyGtkSql:
 				cursor.execute(sql)
 				resultado=cursor.fetchall()
 				
-				for columna in self.treResultado.get_columns():
-					self.treResultado.remove_column(columna);
+				for column in self.treResultado.get_columns():
+					self.treResultado.remove_column(column);
 
 				if resultado:		
 					self.log("Consulta ejecutada correctamente");
 					
 					self.treResultado.set_model(None)
-					columnasmodelo=[]						
+					columnsmodelo=[]						
 					i=0
 					
 					for desc in cursor.description:
-						columnasmodelo.append(gobject.TYPE_STRING)
+						columnsmodelo.append(gobject.TYPE_STRING)
 						col=gtk.TreeViewColumn(desc[0],gtk.CellRendererText(),text=i);
 						self.treResultado.append_column(col);
 						i+=1;
 					
-					self.store=	gtk.ListStore(*columnasmodelo)						
+					self.store=	gtk.ListStore(*columnsmodelo)						
 					
-					for fila in resultado:
-						valores=self.astrings(fila)		
+					for row in resultado:
+						valores=self.astrings(row)		
 						self.store.append(valores)	
 						
 					self.treResultado.set_model(self.store)
@@ -294,9 +297,9 @@ class pyGtkSql:
 					self.log("Obtenida informacion de estructura de la base de datos");										
 					listaTablas=list()
 		
-					for fila in resultado:
-						self.log(fila[0])
-						list_store.append([fila[0]])
+					for row in resultado:
+						self.log(row[0])
+						list_store.append([row[0]])
 									
 					self.cmbTabla.set_model(list_store)
 					self.cmbTabla.set_text_column(0)
@@ -332,24 +335,24 @@ class pyGtkSql:
 			cursor.execute(sql)
 			resultado=cursor.fetchall()
 			
-			for columna in self.treTabla.get_columns():
-				self.treTabla.remove_column(columna);
+			for column in self.treTabla.get_columns():
+				self.treTabla.remove_column(column);
 
 			if resultado:						
 				self.treTabla.set_model(None)
-				columnasmodelo=[]						
+				columnsmodelo=[]						
 				i=0
 				
 				for desc in cursor.description:
-					columnasmodelo.append(gobject.TYPE_STRING)
+					columnsmodelo.append(gobject.TYPE_STRING)
 					col=gtk.TreeViewColumn(desc[0],gtk.CellRendererText(),text=i);
 					self.treTabla.append_column(col);
 					i+=1;
 				
-				store=gtk.ListStore(*columnasmodelo)						
+				store=gtk.ListStore(*columnsmodelo)						
 				
-				for fila in resultado:
-					valores=self.astrings(fila)		
+				for row in resultado:
+					valores=self.astrings(row)		
 					store.append(valores)	
 					
 				self.treTabla.set_model(store)
