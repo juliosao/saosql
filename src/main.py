@@ -71,27 +71,36 @@ class pyGtkSql:
 				resultado=cursor.fetchall()
 
 				if type(resultado) is tuple:		
-					self.store = gtk.TreeStore(str, str, str)
+					self.store = gtk.TreeStore(str,str,str,str,str,str)
 
-					self.log("Obtenida informacion de estructura de la base de datos");										
+					self.log("Obtenida informacion de estructura de la base de datos")
 							
 					for fila in resultado:
 						self.log(fila[0])
-						self.store.append([fila[0],[]])
+						tabla = self.store.append(None,[fila[0],"","","","",""])
+
+						cursor2=self.db.cursor(MySQLdb.cursors.Cursor)
+						cursor2.execute("SHOW FIELDS FROM %s" % fila[0])
+						for columna in cursor2.fetchall():
+							print columna
+							self.store.append(tabla,[columna[0],columna[1],columna[2],columna[3],columna[4],columna[5]])
 									
 					self.treStructure.set_model(self.store)
 										
-					cell = gtk.CellRendererText()
-					tables = gtk.TreeViewColumn("Table", cell, text=0)
-					cell = gtk.CellRendererText()
-					types = gtk.TreeViewColumn("Type", cell, text=0)
-					cell = gtk.CellRendererText()
-					extras = gtk.TreeViewColumn("Extras", cell, text=0)
+					tables = gtk.TreeViewColumn("Table", gtk.CellRendererText(), text=0)
+					types = gtk.TreeViewColumn("Type", gtk.CellRendererText(), text=1)
+					nullable = gtk.TreeViewColumn("Null", gtk.CellRendererText(), text=2)
+					key = gtk.TreeViewColumn("Key", gtk.CellRendererText(), text=3)
+					default = gtk.TreeViewColumn("Default", gtk.CellRendererText(), text=4)
+					extras = gtk.TreeViewColumn("Extras", gtk.CellRendererText(), text=5)
 					self.treStructure.append_column(tables)
 					self.treStructure.append_column(types)
+					self.treStructure.append_column(nullable)
+					self.treStructure.append_column(key)
+					self.treStructure.append_column(default)
 					self.treStructure.append_column(extras)
 
-					self.treStructure.pack_start(cell, True)
+					#self.treStructure.pack_start(cell, True)
 
 					self.tabPages.set_current_page(1)
 					self.log("Consulta OK")
