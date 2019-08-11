@@ -228,9 +228,27 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="orientation">vertical</property>
+            <property name="position">1</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkNotebook" id="tabPages">
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTextView">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkNotebook">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tab_pos">bottom</property>
@@ -346,23 +364,6 @@
                     <property name="position">2</property>
                     <property name="tab_fill">False</property>
                   </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="resize">True</property>
-                <property name="shrink">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkTextView">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                  </object>
                 </child>
               </object>
               <packing>
