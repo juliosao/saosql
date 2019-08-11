@@ -189,6 +189,33 @@
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Execute query</property>
+                <property name="is_important">True</property>
+                <property name="label" translatable="yes">Run</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-execute</property>
+                <signal name="clicked" handler="runQuery" swapped="no"/>
+                <accelerator key="F5" signal="clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -201,12 +228,12 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="orientation">vertical</property>
-            <property name="position_set">True</property>
             <property name="wide_handle">True</property>
             <child>
-              <object class="GtkNotebook">
+              <object class="GtkNotebook" id="tabPages">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="tab_pos">bottom</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
@@ -237,7 +264,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkTreeView">
+                      <object class="GtkTreeView" id="treStructure">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <child internal-child="selection">
@@ -297,10 +324,11 @@
                     <property name="can_focus">True</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTextView">
+                      <object class="GtkTextView" id="txtLogs">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="editable">False</property>
+                        <property name="monospace">True</property>
                       </object>
                     </child>
                   </object>
@@ -312,7 +340,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Log</property>
+                    <property name="label" translatable="yes">Logs</property>
                   </object>
                   <packing>
                     <property name="position">2</property>
@@ -321,7 +349,7 @@
                 </child>
               </object>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>

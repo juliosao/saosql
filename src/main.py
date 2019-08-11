@@ -9,6 +9,7 @@ import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
+from gi.repository import GObject as gobject
 
 
 import connection
@@ -20,26 +21,27 @@ class pyGtkSql:
 	def __init__(self,database=None): 
 		builder = gtk.Builder()
 		builder.add_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),'ui/main.glade'))
-		builder.connect_signals(self)  		
-		
+		builder.connect_signals(self) 
+
+		self.window=builder.get_object('main')
+		#self.clipboard = gtk.Clipboard(selection="CLIPBOARD")
+		self.txtSQL = builder.get_object("txtSQL")
+		self.treResultado=builder.get_object("treResult")
+		self.txtLog=builder.get_object("txtLogs")
+		self.tabPages=builder.get_object("tabPages")
+		self.treStructure=builder.get_object("treStructure")
+		self.connection=None		
+		self.filename=None
+		pyGtkSql.count+=1
+
 		if database == None:
 			c = connection.Connection(None)
 			self.db = c.show()
 		else:
 			self.db=database
 
-
-		self.window=builder.get_object('main')
-		#self.clipboard = gtk.Clipboard(selection="CLIPBOARD")
-		self.txtSQL = builder.get_object("txtSQL")
-		self.treResultado=builder.get_object("treResultado")
-		self.txtLog=builder.get_object("txtLogs")
-		self.tabPaginas=builder.get_object("tabPaginas")
-		self.cmbTabla=builder.get_object("cmbTabla")
-		self.treTabla=builder.get_object("treTabla")
-		self.connection=None		
-		self.filename=None
-		pyGtkSql.count+=1
+		if self.db != None:
+			self.loadDBStructure()
 		
 
 	def show(self):
@@ -55,6 +57,58 @@ class pyGtkSql:
 	def showAbout(self,sender):
 		a=about.About(self)
 		a.show()
+
+	def log(self,texto):
+		buff=self.txtLog.get_buffer()
+		buff.insert(buff.get_end_iter(),texto+'\n')
+		self.txtLog.scroll_to_iter(buff.get_end_iter(),0,True,0,1)
+
+	def loadDBStructure(self):
+		if self.db:
+			try:			
+				cursor=self.db.cursor(MySQLdb.cursors.Cursor)
+				cursor.execute("SHOW TABLES")
+				resultado=cursor.fetchall()
+
+				if type(resultado) is tuple:		
+					self.store = gtk.TreeStore(str, str, str)
+
+					self.log("Obtenida informacion de estructura de la base de datos");										
+							
+					for fila in resultado:
+						self.log(fila[0])
+						self.store.append([fila[0],[]])
+									
+					self.treStructure.set_model(self.store)
+										
+					cell = gtk.CellRendererText()
+					tables = gtk.TreeViewColumn("Table", cell, text=0)
+					cell = gtk.CellRendererText()
+					types = gtk.TreeViewColumn("Type", cell, text=0)
+					cell = gtk.CellRendererText()
+					extras = gtk.TreeViewColumn("Extras", cell, text=0)
+					self.treStructure.append_column(tables)
+					self.treStructure.append_column(types)
+					self.treStructure.append_column(extras)
+
+					self.treStructure.pack_start(cell, True)
+
+					self.tabPages.set_current_page(1)
+					self.log("Consulta OK")
+				else:
+					self.db.commit()
+					self.log("La consulta no devolvio resultados")
+					self.tabPages.set_current_page(2)
+					
+				cursor.close
+
+			except Exception, e:
+				print(e)
+				self.log(str(e))
+				self.tabPages.set_current_page(2)
+
+	def runQuery(self,sender):
+		pass
 	"""
 	def msgbox(self,titulo,texto,accept=True,cancel=False):
 		dialog = gtk.MessageDialog(	None, gtk.DIALOG_MODAL)
